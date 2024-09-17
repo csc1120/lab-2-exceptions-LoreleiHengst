@@ -12,9 +12,14 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.InputMismatchException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+/**
+ * Holds all the methods used with the main class
+ * and methods that call on the die class
+ */
 public class Driver {
     public static void main(String[] args) throws FileNotFoundException {
         System.out.print("Please enter the number of dice to roll, ");
@@ -25,7 +30,7 @@ public class Driver {
         int[] arr2 = Driver.getInput();
         Die[] dice = Driver.createDice(arr2[0], arr2[1]);
         int[] rolledDice = Driver.rollDice(dice, arr2[1], arr2[2]);
-        System.out.println(Arrays.toString(rolledDice));
+        Driver.report(dice.length, rolledDice, Driver.findMax(rolledDice));
 
 
     }
@@ -37,15 +42,42 @@ public class Driver {
         Scanner read = new Scanner(System.in);
         int[] arr = new int[3];
         try {
-            PrintWriter pw = new PrintWriter(f);
-            System.out.println("Enter configuration:");
-            String readStr = read.nextLine();
-            pw.print(readStr);
-            pw.flush();
-
-            int int1 = scan.nextInt();
-            int int2 = scan.nextInt();
-            int int3 = scan.nextInt();
+            try (PrintWriter pw = new PrintWriter(f)) {
+                System.out.print("Enter configuration:");
+                String readStr = read.nextLine();
+                pw.print(readStr);
+                pw.flush();
+            }
+            int int1;
+            try{
+                int1 = scan.nextInt();
+            } catch(InputMismatchException e){
+                System.out.println("Invalid input: All values must be whole numbers.");
+                return Driver.getInput();
+            } catch(NoSuchElementException e){
+                System.out.println("Invalid input: Expected 3 values but only received 0");
+                return Driver.getInput();
+            }
+            int int2;
+            try{
+                int2 = scan.nextInt();
+            } catch(InputMismatchException e){
+                System.out.println("Invalid input: All values must be whole numbers.");
+                return Driver.getInput();
+            } catch(NoSuchElementException e){
+                System.out.println("Invalid input: Expected 3 values but only received 1");
+                return Driver.getInput();
+            }
+            int int3;
+            try{
+                int3 = scan.nextInt();
+            } catch(InputMismatchException e){
+                System.out.println("Invalid input: All values must be whole numbers.");
+                return Driver.getInput();
+            } catch(NoSuchElementException e){
+                System.out.println("Invalid input: Expected 3 values but only received 2");
+                return Driver.getInput();
+            }
             arr[0] = int1;
             arr[1] = int2;
             arr[2] = int3;
@@ -61,13 +93,21 @@ public class Driver {
         }
         return holdDice;
     }
-    private static int[] rollDice(Die[] dice, int numSides, int numRolls){
+    private static int[] rollDice(Die[] dice, int numSides, int numRolls)
+            throws FileNotFoundException {
         int[] frequencies = new int[(numSides - 1) * dice.length + 1];
         int sum = 0;
         for(int i = 0; i<=numRolls; i++) {
             for (Die die : dice) {
-                die.roll();
-                sum += die.getCurrentValue();
+                try {
+                    die.roll();
+                    sum += die.getCurrentValue();
+                } catch(IllegalArgumentException e){
+                    System.out.println("Bad die creation: Illegal number of sides: " +numSides);
+                    int[] arrHolder = Driver.getInput();
+                    Die[] dice1 = Driver.createDice(arrHolder[0], arrHolder[1]);
+                    return Driver.rollDice(dice1, arrHolder[1], arrHolder[2]);
+                }
             }
             if(sum>= dice.length){
                 frequencies[sum - dice.length]++;
@@ -76,5 +116,25 @@ public class Driver {
         }
         return frequencies;
     }
-
+    private static int findMax(int[] rolls){
+        int holder = Integer.MIN_VALUE;
+        for (int roll : rolls) {
+            if (holder < roll) {
+                holder = roll;
+            }
+        }
+        return holder;
+    }
+    private static void report(int numDice, int[] rolls, int max){
+        String[] starHolder = new String[rolls.length];
+        final int percent = 10;
+        int scale = max / percent;
+        for(int i = 0; i< starHolder.length; i++) {
+            int numStars = rolls[i] / scale;
+            starHolder[i] = "*".repeat(Math.max(0, numStars));
+        }
+        for(int i = numDice; i<rolls.length+numDice; i++) {
+            System.out.printf("%-2d:%-9d%s\n", i, rolls[i-numDice], starHolder[i-numDice]);
+        }
+    }
 }

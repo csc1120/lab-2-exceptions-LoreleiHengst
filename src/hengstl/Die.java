@@ -9,29 +9,45 @@ package hengstl;
 
 import java.util.Random;
 
+/**
+ * Creates the class die where the constructors are used
+ * it holds the methods used in the main driver
+ */
 public class Die {
     private int currentValue;
     private int numSides;
-    private final int MAX_SIDES = 100;
-    private final int MIN_SIDES = 2;
-    private Random random = new Random();
+    private final Random random = new Random();
+
+    /**
+     * creates an instance of Die
+     * @param numSides gets the number of sides the die will have
+     */
     public Die(int numSides) {
-        if(numSides >= MIN_SIDES && numSides <= MAX_SIDES) {
+        final int maxSides = 100;
+        final int minSides = 2;
+        if(numSides >= minSides && numSides <= maxSides) {
             this.numSides = numSides;
         }
     }
+
+    /**
+     * rolls the dice and changes the value.
+     * can only be accessed by reaching the .getCurrentValue() method
+     */
     public void roll(){
         currentValue = random.nextInt(numSides)+1;
     }
+
+    /**
+     * Gets the current value when needed and changes that value to zero.
+     * @return int
+     */
     public int getCurrentValue(){
-        int holder=0;
+        int holder = 0;
         if(currentValue>=2 && currentValue<=numSides) {
             holder = currentValue;
         }
-        else{
-            //dienotrolledexception
-        }
-        currentValue=0;
+        currentValue = 0;
         return holder;
     }
 }
