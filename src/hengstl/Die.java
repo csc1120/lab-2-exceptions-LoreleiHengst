@@ -41,10 +41,13 @@ public class Die {
     /**
      * Gets the current value when needed and changes that value to zero.
      * @return int
+     * @throws DieNotRolledException which makes sure that the die is rolled
      */
-    public int getCurrentValue(){
-        int holder = 0;
-        if(currentValue>=2 && currentValue<=numSides) {
+    public int getCurrentValue() throws DieNotRolledException {
+        int holder;
+        if(currentValue==0){
+            throw new DieNotRolledException("Die not rolled");
+        } else{
             holder = currentValue;
         }
         currentValue = 0;

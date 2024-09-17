@@ -102,7 +102,7 @@ public class Driver {
                 try {
                     die.roll();
                     sum += die.getCurrentValue();
-                } catch(IllegalArgumentException e){
+                } catch(DieNotRolledException e){
                     System.out.println("Bad die creation: Illegal number of sides: " +numSides);
                     int[] arrHolder = Driver.getInput();
                     Die[] dice1 = Driver.createDice(arrHolder[0], arrHolder[1]);
