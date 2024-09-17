@@ -40,7 +40,7 @@ public class Die {
 
     /**
      * Gets the current value when needed and changes that value to zero.
-     * @return int
+     * @return int which we use to get the current value
      * @throws DieNotRolledException which makes sure that the die is rolled
      */
     public int getCurrentValue() throws DieNotRolledException {
