@@ -23,6 +23,9 @@ public class Driver {
         System.out.println("Example: \"2 6 1000\"");
         System.out.println();
         int[] arr2 = Driver.getInput();
+        Die[] dice = Driver.createDice(arr2[0], arr2[1]);
+        int[] rolledDice = Driver.rollDice(dice, arr2[1], arr2[2]);
+        System.out.println(Arrays.toString(rolledDice));
 
 
     }
@@ -53,7 +56,25 @@ public class Driver {
     }
     private static Die[] createDice(int numDice, int numSides){
         Die[] holdDice = new Die[numDice];
-
+        for(int i = 0; i<numDice; i++) {
+            holdDice[i] = new Die(numSides);
+        }
         return holdDice;
     }
+    private static int[] rollDice(Die[] dice, int numSides, int numRolls){
+        int[] frequencies = new int[(numSides - 1) * dice.length + 1];
+        int sum = 0;
+        for(int i = 0; i<=numRolls; i++) {
+            for (Die die : dice) {
+                die.roll();
+                sum += die.getCurrentValue();
+            }
+            if(sum>= dice.length){
+                frequencies[sum - dice.length]++;
+            }
+            sum = 0;
+        }
+        return frequencies;
+    }
+
 }

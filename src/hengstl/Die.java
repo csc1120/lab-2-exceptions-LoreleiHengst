@@ -14,7 +14,7 @@ public class Die {
     private int numSides;
     private final int MAX_SIDES = 100;
     private final int MIN_SIDES = 2;
-    private Random random;
+    private Random random = new Random();
     public Die(int numSides) {
         if(numSides >= MIN_SIDES && numSides <= MAX_SIDES) {
             this.numSides = numSides;
